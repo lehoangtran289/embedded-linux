@@ -11,7 +11,6 @@
 int main(int argc, char **argv) {
     int sockfd;
     struct sockaddr_in servaddr;
-    char sendline[MAXLINE], recvline[MAXLINE];
 
     // basic check of the arguments additional checks can be inserted
     if (argc != 2) {
@@ -40,19 +39,26 @@ int main(int argc, char **argv) {
     }
 
     int choice = 0;
+    char sendline[1000], recvline[1000];
     do {
-        printf("\n-----\n1. Process to server\n");
+        printf("\n-------\n1. Process to server\n");
         printf("2. Exit\n");
         printf("Input a choice: ");
         scanf("%d", &choice);
+        getchar();
+
         switch (choice) {
             case 1:
+                strcpy(sendline, "");
+                strcpy(recvline, "");
                 printf("\nEnter a string: ");
-                fflush(stdin);
-                scanf("%s", sendline);
+                fgets(sendline, MAXLINE, stdin);
                 if (sendline[0] == '\n') {
                     puts("Invalid string\n");
                     break;
+                }
+                if ((strlen(sendline) > 0) && (sendline[strlen(sendline) - 1] == '\n')) {
+                    sendline[strlen(sendline) - 1] = '\0';
                 }
                 send(sockfd, sendline, strlen(sendline), 0);
 
