@@ -26,7 +26,7 @@ int main()
     char buf[512], *p;
 
     /* mapping file open */
-    if ((fd = open("test.txt", O_RDWR | O_CREAT, 0666)) == -1)
+    if ((fd = open("test.dat", O_RDWR | O_CREAT, 0666)) == -1)
     {
         perror("open");
         exit(-1);
@@ -66,9 +66,31 @@ int main()
         exit(-1);
     }
 
-    printf("Printing file, as an array of characters...\n\n");
-    for (int i = 0; i < size; i++)
-        printf("%x", ptr[i]);
+    int choice = 1;
+    int index = 0;
+    while (choice == 1)
+    {
+        printf("Press 1 to continue write to file, other button to stop the program\n");
+        scanf("%d", &choice);
+        if (choice != 1)
+            break;
+        printf("Write to memory map. Follow TestData structure\n");
+        printf("Input string value: ");
+        scanf(" %[^\n]", ptr[index].str);
+        printf("Input long value: ");
+        scanf("%ld", &ptr[index].lval);
+        printf("Input double value: ");
+        scanf("%lf", &ptr[index].dval);
+        index++;
+    }
+
+    for (int j = 0; j < index; j++)
+    {
+        printf("Test Data %d\n", j);
+        printf("string: %s\n", ptr[j].str);
+        printf("long: %ld\n", ptr[j].lval);
+        printf("double: %lf\n", ptr[j].dval);
+    }
 
     /* Synchronize a file with a memory map */
     msync(ptr, size, MS_ASYNC);
