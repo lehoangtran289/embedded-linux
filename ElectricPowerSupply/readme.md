@@ -1,5 +1,5 @@
 ## Power Supply
-0. Change log_server path to your log file
+0. Change log_server path in 'server.c' to your log file
 ```
 "{your-log-folder}/server_%Y-%m-%d_%H:%M:%S.txt"
 ```
