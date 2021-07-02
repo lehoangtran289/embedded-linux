@@ -298,7 +298,11 @@ void powSupplyInfoAccess_handle() {
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
 			sleep(1);
-			sprintf(temp, "System power using: %dW", powsys->current_power);
+			int total_supply = 0;
+			for (int i = 0; i < MAX_DEVICE; i++)
+				total_supply += devices[i].use_power[devices[i].mode];
+
+			sprintf(temp, "System power using: %dW", total_supply);
 			tprintf("%s\n", temp);
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -334,7 +338,11 @@ void powSupplyInfoAccess_handle() {
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
-			sprintf(temp, "System power using: %dW", powsys->current_power);
+			int total_supply = 0;
+			for (int i = 0; i < MAX_DEVICE; i++)
+				total_supply += devices[i].use_power[devices[i].mode];
+
+			sprintf(temp, "System power using: %dW", total_supply);
 			tprintf("%s\n", temp);
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -408,14 +416,17 @@ void elePowerCtrl_handle() {
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
-			tprintf("Server reset in 10 seconds\n");
+			//tprintf("Server reset in 10 seconds\n");
 
 			int no;
 			for(no = 0; no < MAX_DEVICE; no++) {
 				if(devices[no].mode == 1) {
+					sleep(1);
 					new_msg.mtype = 2;
 					sprintf(new_msg.mtext, "m|%d|2|", devices[no].pid);
 					msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
+					sleep(1);
+					//tprintf("%s\n", use_mode[devices[no].mode]);
 				}
 			}
 
@@ -476,7 +487,7 @@ void logWrite_handle() {
 	char file_name[255];
 	time_t t = time(NULL);
 	struct tm * now = localtime(&t);
-	strftime(file_name, sizeof(file_name), "/Users/hoangvan/Desktop/log/server_%Y-%m-%d_%H:%M:%S.txt", now);
+	strftime(file_name, sizeof(file_name), "/Users/hoangvan/Desktop/Study/ITSS_EmbeddedLinux/Lab/Project/embedded-linux/ElectricPowerSupply/log/server_%Y-%m-%d_%H:%M:%S.txt", now);
 	log_server = fopen(file_name, "w");
 	tprintf("Log server started, file is %s\n", file_name);
 
