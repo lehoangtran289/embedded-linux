@@ -433,7 +433,8 @@ void elePowerCtrl_handle() {
 			pid_t my_child;
 			if ((my_child = fork()) == 0) {
 				// in child
-				sleep(5);
+				tprintf("Child process of elePowerCtrl, stop all supply if overload more than 10s\n", getpid());
+				sleep(10);
 
 				int no;
 				for(no = 0; no < MAX_DEVICE; no++) {
@@ -446,6 +447,7 @@ void elePowerCtrl_handle() {
 				kill(getpid(), SIGKILL);
 			} else {
 				//in parent
+				tprintf("Loop checking overload status\n");
 				while (1) {
 					sum_temp = 0;
 					for (i = 0; i < MAX_DEVICE; i++)
@@ -454,8 +456,9 @@ void elePowerCtrl_handle() {
 
 					if (powsys->current_power < POWER_THRESHOLD) {
 						powsys->supply_over = 0;
-						tprintf("OK, power now is %d", powsys->current_power);
+						tprintf("OK, power now is %d\n", powsys->current_power);
 						kill(my_child, SIGKILL);
+						tprintf("elePowerCtl kill child process: %d\n", my_child);
 						break;
 					}
 				}
