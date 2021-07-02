@@ -144,9 +144,9 @@ int main(int argc, char const *argv[])
 				menu = '3';
 				printf("DISCONNECTED\n");
 			}
+			send(client_sock, &menu, 1, 0);
 			if (menu == '3')
 				break;
-			send(client_sock, &menu, 1, 0);
 		} while (1);
 	}
 
