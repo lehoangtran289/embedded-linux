@@ -138,8 +138,15 @@ void powerSupply_handle(int conn_sock) {
 				// send mode to powSupplyInfoAccess
 				msg_t new_msg;
 				new_msg.mtype = 2;
-				sprintf(new_msg.mtext, "m|%d|%s|", getpid(), recv_data); // m for MODE
-				msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
+				if (recv_data[0] == '3') {
+					sprintf(new_msg.mtext, "d|%d|", getpid()); 
+					msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
+					powerSupply_count--;
+					// kill this process
+					kill(getpid(), SIGKILL);
+				} else 
+					sprintf(new_msg.mtext, "m|%d|%s|", getpid(), recv_data); // m for MODE
+					msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 			}
 		}
 	} // endwhile
@@ -298,7 +305,11 @@ void powSupplyInfoAccess_handle() {
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
 			sleep(1);
-			sprintf(temp, "System power using: %dW", powsys->current_power);
+			int total_supply = 0;
+			for (int i = 0; i < MAX_DEVICE; i++)
+				total_supply += devices[i].use_power[devices[i].mode];
+
+			sprintf(temp, "System power using: %dW", total_supply);
 			tprintf("%s\n", temp);
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -314,11 +325,10 @@ void powSupplyInfoAccess_handle() {
 			msg_t new_msg;
 			new_msg.mtype = 1;
 			char temp[MAX_MESSAGE_LENGTH];
-			
-			sprintf(temp, "Device [%s] disconnected", devices[no].name);
 
 			for (no = 0; no < MAX_DEVICE; no++) {
 				if (devices[no].pid == temp_pid) {
+					sprintf(temp, "Device [%s] disconnected", devices[no].name);
 					tprintf("%s\n\n", temp);
 					devices[no].pid = 0;
 					strcpy(devices[no].name, "");
@@ -334,7 +344,11 @@ void powSupplyInfoAccess_handle() {
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
-			sprintf(temp, "System power using: %dW", powsys->current_power);
+			int total_supply = 0;
+			for (int i = 0; i < MAX_DEVICE; i++)
+				total_supply += devices[i].use_power[devices[i].mode];
+
+			sprintf(temp, "System power using: %dW", total_supply);
 			tprintf("%s\n", temp);
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -408,21 +422,25 @@ void elePowerCtrl_handle() {
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
 
-			tprintf("Server reset in 10 seconds\n");
+			//tprintf("Server reset in 10 seconds\n");
 
 			int no;
 			for(no = 0; no < MAX_DEVICE; no++) {
 				if(devices[no].mode == 1) {
+					sleep(1);
 					new_msg.mtype = 2;
 					sprintf(new_msg.mtext, "m|%d|2|", devices[no].pid);
 					msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
+					sleep(1);
+					//tprintf("%s\n", use_mode[devices[no].mode]);
 				}
 			}
 
 			pid_t my_child;
 			if ((my_child = fork()) == 0) {
 				// in child
-				sleep(5);
+				tprintf("Child process of elePowerCtrl, stop all supply if overload more than 10s\n", getpid());
+				sleep(10);
 
 				int no;
 				for(no = 0; no < MAX_DEVICE; no++) {
@@ -435,6 +453,7 @@ void elePowerCtrl_handle() {
 				kill(getpid(), SIGKILL);
 			} else {
 				//in parent
+				tprintf("Loop checking overload status\n");
 				while (1) {
 					sum_temp = 0;
 					for (i = 0; i < MAX_DEVICE; i++)
@@ -443,8 +462,9 @@ void elePowerCtrl_handle() {
 
 					if (powsys->current_power < POWER_THRESHOLD) {
 						powsys->supply_over = 0;
-						tprintf("OK, power now is %d", powsys->current_power);
+						tprintf("OK, power now is %d\n", powsys->current_power);
 						kill(my_child, SIGKILL);
+						tprintf("elePowerCtl kill child process: %d\n", my_child);
 						break;
 					}
 				}
@@ -476,7 +496,7 @@ void logWrite_handle() {
 	char file_name[255];
 	time_t t = time(NULL);
 	struct tm * now = localtime(&t);
-	strftime(file_name, sizeof(file_name), "/Users/hoangvan/Desktop/log/server_%Y-%m-%d_%H:%M:%S.txt", now);
+	strftime(file_name, sizeof(file_name), "/Users/hoangvan/Desktop/Study/ITSS_EmbeddedLinux/Lab/Project/embedded-linux/ElectricPowerSupply/log/server_%Y-%m-%d_%H:%M:%S.txt", now);
 	log_server = fopen(file_name, "w");
 	tprintf("Log server started, file is %s\n", file_name);
 
