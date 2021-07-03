@@ -71,7 +71,7 @@ int main(int argc, char const *argv[])
 
 	// First, send device info to server
 	memset(buff, '\0', strlen(buff) + 1);
-	sprintf(buff, "%s|%d|%d", name, mode_2, mode_3);
+	sprintf(buff, "n%s|%d|%d", name, mode_2, mode_3);
 	msg_len = strlen(buff);
 	if (msg_len == 0)
 	{
@@ -129,7 +129,7 @@ int main(int argc, char const *argv[])
 
 			char menu = getchar();
 			getchar();
-
+			char rq[3] = "mxx";
 			switch (menu)
 			{
 			case '0':
@@ -145,7 +145,9 @@ int main(int argc, char const *argv[])
 				menu = '3';
 				printf("DISCONNECTED\n");
 			}
-			send(client_sock, &menu, 1, 0);
+			rq[1] = menu;
+			rq[2] = '\0';
+			send(client_sock, rq, 1, 0);
 			if (menu == '3')
 				break;
 		} while (1);

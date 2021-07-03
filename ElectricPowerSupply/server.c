@@ -96,8 +96,6 @@ void sigHandleSIGINT () {
 }
 
 void powerSupply_handle(int conn_sock) {
-	// check if this is first time client sent
-	int is_first_message = 1;
 	//////////////////////////////
 	// Connect to shared memory //
 	//////////////////////////////
@@ -126,16 +124,16 @@ void powerSupply_handle(int conn_sock) {
 		} else {
 			// if receive message from client
 			recv_data[bytes_received] = '\0';
-			if (is_first_message) {
-				is_first_message = 0;
+			if (recv_data[0] == 'n') {
+				memmove(recv_data, recv_data + 1, strlen(recv_data));
 				// send device info to powSupplyInfoAccess
 				msg_t new_msg;
 				new_msg.mtype = 2;
 				sprintf(new_msg.mtext, "n|%d|%s|", getpid(), recv_data); // n for NEW
 				msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
-			} else {
-				// if not first time client send
+			} else if (recv_data[0] == 'm') {
 				// send mode to powSupplyInfoAccess
+				memmove(recv_data, recv_data + 1, strlen(recv_data));
 				msg_t new_msg;
 				new_msg.mtype = 2;
 				if (recv_data[0] == '3') {
