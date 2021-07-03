@@ -36,8 +36,9 @@ int main(int argc, char const *argv[])
 	// int mode_3;
 	// int use_mode;
 	printf("Device name: ");
-	//sscanf(stdin, "%^[\n]", name);
-	scanf("%s", name);
+	//sscanf(stdin, "%*c%^[\n]", name);
+	//scanf("%s", name);
+	gets(name);
 	printf("Normal power mode: ");
 	scanf("%d", &mode_2);
 	getchar();
