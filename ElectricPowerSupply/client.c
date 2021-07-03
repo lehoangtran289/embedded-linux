@@ -120,11 +120,11 @@ int main(int argc, char const *argv[])
 		{
 			sleep(1);
 			printf(
-				"---- MENU ----\n"
+				"--------- MENU ---------\n"
 				"0. Turn off\n"
 				"1. Normal mode\n"
 				"2. Power saving mode\n"
-				"(Choose 0,1 or 2, others to disconnect): ");
+				"Choose mode or other numbers to disconnect the device: ");
 
 			char menu = getchar();
 			getchar();

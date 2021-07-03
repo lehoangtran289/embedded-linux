@@ -1,0 +1,9 @@
+2021/07/02_16:33:16 | [bong1] connected (Normal use: 4000W, Linited use: 3000W)
+2021/07/02_16:33:16 | Device [bong1] set mode to [off] ~ using 0W
+2021/07/02_16:33:16 | Device [bong1] change mode to [normal], comsume 4000W
+2021/07/02_16:33:16 | System power using: 4000W
+2021/07/02_16:33:16 | [bong2] connected (Normal use: 2000W, Linited use: 1000W)
+2021/07/02_16:33:16 | Device [bong2] set mode to [off] ~ using 0W
+2021/07/02_16:33:16 | Device [bong2] change mode to [normal], comsume 2000W
+2021/07/02_16:33:16 | WARNING!!! Over threshold, power comsuming: 6000W
+2021/07/02_16:33:16 | DANGER!!! System overload, power comsuming: 6000W

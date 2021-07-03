@@ -1,0 +1,6 @@
+2021/07/02_22:08:53 | [bong1] connected (Normal use: 2000W, Linited use: 1000W)
+2021/07/02_22:08:53 | Device [bong1] set mode to [off] ~ using 0W
+2021/07/02_22:08:53 | Device [bong1] change mode to [normal], comsume 2000W
+2021/07/02_22:08:53 | System power using: 2000W
+2021/07/02_22:08:53 | Device [bong1] change mode to [limited], comsume 1000W
+2021/07/02_22:08:53 | System power using: 1000W

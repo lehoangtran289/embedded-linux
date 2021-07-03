@@ -258,12 +258,12 @@ void powSupplyInfoAccess_handle() {
 				&devices[no].use_power[1],
 				&devices[no].use_power[2]);
 			devices[no].mode = 0;
-			tprintf("--- Connected device info ---\n");
-			tprintf("       name: %s\n", devices[no].name);
-			tprintf("     normal: %dW\n", devices[no].use_power[1]);
-			tprintf("      limit: %dW\n", devices[no].use_power[2]);
-			tprintf("   use mode: %s\n", use_mode[devices[no].mode]);
-			tprintf("-----------------------------\n\n");
+			tprintf("\n------ New device connected ------\n");
+			tprintf("          Name: %s\n", devices[no].name);
+			tprintf("   Normal mode: %dW\n", devices[no].use_power[1]);
+			tprintf("  Limited mode: %dW\n", devices[no].use_power[2]);
+			tprintf("      Use mode: %s\n", use_mode[devices[no].mode]);
+			tprintf("----------------------------------\n\n");
 			tprintf("System power using: %dW\n", powsys->current_power);
 
 			// send message to logWrite
@@ -421,8 +421,6 @@ void elePowerCtrl_handle() {
 			tprintf("%s\n", temp);
 			sprintf(new_msg.mtext, "s|%s", temp);
 			msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
-
-			//tprintf("Server reset in 10 seconds\n");
 
 			int no;
 			for(no = 0; no < MAX_DEVICE; no++) {
