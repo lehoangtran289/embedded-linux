@@ -258,7 +258,7 @@ void powSupplyInfoAccess_handle() {
 				&devices[no].use_power[1],
 				&devices[no].use_power[2]);
 			devices[no].mode = 0;
-			tprintf("\n------ New device connected ------\n");
+			tprintf("------ New device connected ------\n");
 			tprintf("          Name: %s\n", devices[no].name);
 			tprintf("   Normal mode: %dW\n", devices[no].use_power[1]);
 			tprintf("  Limited mode: %dW\n", devices[no].use_power[2]);
