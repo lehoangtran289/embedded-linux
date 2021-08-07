@@ -1,5 +1,8 @@
 # Prerequisites
 *.d
+client
+server
+a.out
 
 # Object files
 *.o
