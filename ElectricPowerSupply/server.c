@@ -386,7 +386,7 @@ void elePowerCtrl_handle() {
             msg_t new_msg;
             new_msg.mtype = 1;
             char temp[MAX_MESSAGE_LENGTH];
-            sprintf(temp, "WARNING!!! Over threshold, power comsuming: %dW", powsys->current_power);
+            sprintf(temp, "elePowerCtrl_handle | WARNING | Power threshold exceeded, consumed = %dW", powsys->current_power);
             tprintf("%s\n", temp);
             sprintf(new_msg.mtext, "s|%s", temp);
             msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -399,7 +399,7 @@ void elePowerCtrl_handle() {
             new_msg.mtype = 1;
             char temp[MAX_MESSAGE_LENGTH];
 
-            sprintf(temp, "DANGER!!! System overload, power comsuming: %dW", powsys->current_power);
+            sprintf(temp, "elePowerCtrl_handle | DANGER | System overload, power comsumed = %dW", powsys->current_power);
             tprintf("%s\n", temp);
             sprintf(new_msg.mtext, "s|%s", temp);
             msgsnd(msqid, &new_msg, MAX_MESSAGE_LENGTH, 0);
@@ -419,7 +419,7 @@ void elePowerCtrl_handle() {
             pid_t my_child;
             if ((my_child = fork()) == 0) {
                 // in child
-                tprintf("Child process of elePowerCtrl, stop all supply if overload more than 10s\n", getpid());
+                tprintf("Child process of `elePowerCtrl`, stop supply if overload > 10s\n", getpid());
                 sleep(10);
 
                 int no;
